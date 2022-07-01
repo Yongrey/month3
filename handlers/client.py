@@ -3,6 +3,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ParseMode
 from config import dp, bot
 from aiogram import types, Dispatcher
 from keyboards import client_kb
+from pars import scrapy_shows
 
 # @dp.message_handler(commands=['start'])
 async def hello(message: types.Message):
@@ -18,7 +19,8 @@ async  def help(message : types.Message):
                         f'Also i have some commands\n'
                         f'/quiz1 this command for hilarious quiz'
                         f' questions, quiz has continue by clicking button *Следущая викторина*\n'
-                        f'2. Also you can share location or info about you')
+                        f'2. Also you can share location or info about you'
+                        f'3. /pars u can see all new shows from doramy site')
 async def quiz_1(message: types.Message):
     markup = InlineKeyboardMarkup()
     button_call_1 = InlineKeyboardButton("Следующая Викторина",
@@ -43,8 +45,13 @@ async def quiz_1(message: types.Message):
         reply_markup=markup
     )
 
+async def parser_shows(message: types.Message):
+    data = scrapy_shows.scrapy_script()
+    for shows in data:
+        await bot.send_message(message.chat.id, shows)
 
 def register_handlers_client(dp: Dispatcher):
     dp.register_message_handler(hello, commands=['start'])
     dp.register_message_handler(quiz_1, commands=['quiz1'])
     dp.register_message_handler(help, commands=['help'])
+    dp.register_message_handler(parser_shows, commands=['pars'])
